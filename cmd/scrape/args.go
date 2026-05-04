@@ -28,6 +28,7 @@ type args struct {
 	DelayMax          int
 	Out               string
 	CSV               string
+	DashboardAddr     string
 }
 
 func parseArgs(argv []string) (args, error) {
@@ -40,6 +41,7 @@ func parseArgs(argv []string) (args, error) {
 		DelayMax:       6000,
 		SaveEvery:      1,
 		NoticeAttempts: 2,
+		DashboardAddr:  ":8081",
 		Out:            mapsreview.ResultsJSON,
 		CSV:            mapsreview.ResultsCSV,
 		MaxResults:     0,
@@ -95,6 +97,8 @@ func parseArgs(argv []string) (args, error) {
 		case "--csv":
 			out.CSV = value
 			csvSet = true
+		case "--dashboard":
+			out.DashboardAddr = value
 		case "--help", "-h":
 			printHelp()
 			os.Exit(0)
