@@ -39,6 +39,7 @@ type clientRow struct {
 	Rating             *float64 `json:"rating"`
 	ReviewCount        *int     `json:"reviewCount"`
 	Category           string   `json:"category"`
+	ParentCategory     string   `json:"parentCategory"`
 	HasBanner          bool     `json:"hasBanner"`
 	RemovedRange       string   `json:"removedRange"`
 	RemovedMin         *int     `json:"removedMin"`
@@ -202,6 +203,13 @@ func makeHTML(data []clientRow) string {
 	for _, cat := range categories {
 		if cat != "" {
 			categoryOptions += fmt.Sprintf(`<option value="%s">%s</option>`, escAttr(cat), esc(cat))
+		}
+	}
+	parentCats := uniqueSorted(data, func(row clientRow) string { return row.ParentCategory })
+	parentCategoryOptions := ""
+	for _, pcat := range parentCats {
+		if pcat != "" {
+			parentCategoryOptions += fmt.Sprintf(`<option value="%s">%s</option>`, escAttr(pcat), esc(pcat))
 		}
 	}
 
@@ -522,6 +530,8 @@ __ANALYTICS__
     <section class="card dist" aria-label="Verteilung"><h2>Verteilung der Lösch-Stufen</h2><div id="distribution"></div></section>
 
     <section class="card bezirk-summary" aria-label="Bezirks-Gruppen"><h2>Gruppierung nach statistischem Bezirk</h2><p>Top-Bezirke im aktuellen Filter, sortiert nach Banner-Anteil. Anklicken setzt den Bezirksfilter.</p><div class="bezirk-list" id="bezirkSummary"></div></section>
+
+    <section class="card bezirk-summary" aria-label="Kategorie-Gruppen"><h2>Gruppierung nach Kategorie</h2><p>Übergeordnete Kategorie-Gruppen im aktuellen Filter, sortiert nach Banner-Anteil.</p><div class="bezirk-list" id="parentSummary"></div></section>
 
     <section class="card map-panel" aria-label="Karte">
       <h2>Karte der erfassten Orte</h2>

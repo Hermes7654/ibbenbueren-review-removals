@@ -392,6 +392,21 @@ function renderBezirkSummary(rows) {
   const items = [...groups.values()].sort((a, b) => (a.label === 'Ohne Bezirk') - (b.label === 'Ohne Bezirk') || (b.banners / Math.max(b.rows, 1)) - (a.banners / Math.max(a.rows, 1)) || b.banners - a.banners || b.rows - a.rows).slice(0, 12);
   document.getElementById('bezirkSummary').innerHTML = items.map(item => '<button type="button" class="bezirk-row" data-bezirk="' + esc(item.label) + '"><strong>' + esc(item.label) + '</strong><span>' + n(item.rows) + ' Orte</span><span>' + n(item.banners) + ' Banner</span><span>' + pct(item.banners / Math.max(item.rows, 1) * 100) + '</span></button>').join('') || '<p>Keine Bezirksdaten im Filter.</p>';
 }
+function renderParentSummary(rows) {
+  const groups = new Map();
+  for (const row of rows) {
+    const label = row.parentCategory || 'Sonstiges';
+    if (!groups.has(label)) groups.set(label, { label, rows: 0, banners: 0, removed: 0 });
+    const group = groups.get(label);
+    group.rows += 1;
+    if (row.hasBanner) {
+      group.banners += 1;
+      group.removed += row.removedEstimate || 0;
+    }
+  }
+  const items = [...groups.values()].sort((a, b) => (b.banners / Math.max(b.rows, 1)) - (a.banners / Math.max(a.rows, 1)) || b.banners - a.banners || b.rows - a.rows);
+  document.getElementById('parentSummary').innerHTML = items.map(item => '<div class="bezirk-row"><strong>' + esc(item.label) + '</strong><span>' + n(item.rows) + ' Orte</span><span>' + n(item.banners) + ' Banner</span><span>' + pct(item.banners / Math.max(item.rows, 1) * 100) + '</span></div>').join('') || '<p>Keine Kategorie-Daten im Filter.</p>';
+}
 function updatePanels(rows) {
   const banners = bannerRows(rows);
   renderBars('barsRemoved', 'removed', [...banners].sort((a,b) => b.removedEstimate - a.removedEstimate), row => row.removedEstimate, row => row.removedRange + ' · ' + n(row.removedEstimate), '', 300);
@@ -427,6 +442,7 @@ function render() {
   updateKpis(rows);
   updatePanels(rows);
   renderBezirkSummary(rows);
+  renderParentSummary(rows);
   renderMap(modeRows(rows), rows);
   renderTable(rows);
   updateFilterToggle();
