@@ -329,6 +329,7 @@ func extractPlace(ctx context.Context, discovery mapsreview.Discovery) (mapsrevi
 	}
 	mapsreview.EnrichPlaceLocation(&row)
 	applyNotice(&row, notice)
+	mapsreview.EnrichParentCategory(&row)
 	mapsreview.ApplyPlaceOverrides(&row)
 	mapsreview.ComputeMetrics(&row)
 	return row, nil
@@ -929,6 +930,7 @@ func auditBannerPlaces(ctx context.Context, discoveries []mapsreview.Discovery, 
 		applyStatsIfPresent(&next, stats)
 		applyNotice(&next, notice)
 		mapsreview.EnrichPlaceLocation(&next)
+		mapsreview.EnrichParentCategory(&next)
 		mapsreview.ApplyPlaceOverrides(&next)
 		mapsreview.ComputeMetrics(&next)
 		rows[next.ID] = next
@@ -1002,6 +1004,7 @@ func saveRows(args args, rows map[string]mapsreview.Place) error {
 	out := mapValues(rows)
 	for i := range out {
 		mapsreview.EnrichPlaceLocation(&out[i])
+		mapsreview.EnrichParentCategory(&out[i])
 		mapsreview.ApplyPlaceOverrides(&out[i])
 	}
 	mapsreview.SortPlaces(out)

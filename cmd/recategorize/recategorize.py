@@ -92,6 +92,13 @@ def normalize_category(candidate):
                 return bucket["name"]
     return categories[-1]["name"]
 
+def parent_of(category_name):
+    """Return the parent group for a category name."""
+    for bucket in categories:
+        if bucket["name"] == category_name:
+            return bucket.get("parent", bucket["name"])
+    return ""
+
 def infer_from_name(name):
     if not name:
         return ""
@@ -113,6 +120,16 @@ stats = {}
 
 for place in places:
     old_cat = place.get("category")
+    
+    # Always compute and set parentCategory
+    cat_for_parent = old_cat or ""
+    parent = parent_of(cat_for_parent)
+    if parent:
+        place["parentCategory"] = parent
+    else:
+        place.pop("parentCategory", None)
+    
+    # Only recategorize if currently Sonstiges
     if old_cat not in (None, "Sonstiges"):
         continue
     
@@ -123,6 +140,10 @@ for place in places:
         place["category"] = new_cat
         changed += 1
         stats[new_cat] = stats.get(new_cat, 0) + 1
+        # Update parentCategory for recategorized place
+        parent = parent_of(new_cat)
+        if parent:
+            place["parentCategory"] = parent
 
 # Write back
 with open("output/places.json", "w") as f:
@@ -137,7 +158,7 @@ if changed > 0:
     import csv, io
     fieldnames = [
         "id", "name", "postcode", "address", "rating", "reviewCount",
-        "category", "lat", "lng", "bezirkId", "bezirkName",
+        "category", "parentCategory", "lat", "lng", "bezirkId", "bezirkName",
         "hasDefamationNotice", "removedMin", "removedMax", "removedEstimate",
         "deletionRatioPct", "realRatingAdjusted", "removedText",
         "url", "readAt", "placeState", "status", "error"
