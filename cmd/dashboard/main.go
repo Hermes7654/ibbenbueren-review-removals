@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"html"
+	"math"
 	"os"
 	"path/filepath"
 	"sort"
@@ -198,10 +199,8 @@ func makeHTML(data []clientRow) string {
 	stats := makeSEOStats(data, snapshotDisplay)
 	structuredData := structuredDataJSON(stats, snapshot)
 
-	jsonData, _ := json.Marshal(data)
-	jsonText := strings.ReplaceAll(string(jsonData), "<", "\\u003c")
-	jsonBezirke, _ := json.Marshal(mapsreview.BezirkBoundaries())
-	bezirkText := strings.ReplaceAll(string(jsonBezirke), "<", "\\u003c")
+	jsonText := compactClientDataJSON(data)
+	bezirkText := compactBezirkDataJSON()
 
 	postcodeOptions := ""
 	for _, postcode := range postcodes {
@@ -304,7 +303,6 @@ __ANALYTICS__
       } catch (_) {}
     }());
   </script>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <style>
     :root {
       color-scheme: light;
@@ -547,6 +545,9 @@ __ANALYTICS__
     a:hover { text-decoration: underline; }
     .pill { display: inline-flex; align-items: center; border-radius: 3px; padding: 3px 7px; background: var(--pill-bg); color: var(--green); font-weight: 700; font-size: 12px; }
     .pill.bad { background: var(--pill-bad-bg); color: var(--red); }
+    .show-more { display: block; min-width: 220px; height: 42px; margin: 14px auto 0; padding: 0 18px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface-raised); color: var(--heading); font-weight: 700; cursor: pointer; }
+    .show-more:hover, .show-more:focus-visible { border-color: var(--red); color: var(--red); outline: none; }
+    .show-more[hidden] { display: none; }
     footer { margin-top: 18px; color: var(--muted); font-size: 13px; line-height: 1.5; }
     .footer-privacy, .footer-credit { margin-top: 6px; }
     .footer-credit a { font-weight: 700; }
@@ -669,6 +670,7 @@ __SEO_SUMMARY__
         <tbody></tbody>
       </table>
     </section>
+    <button class="show-more" id="showMoreRows" type="button" hidden>Mehr Zeilen anzeigen</button>
     <footer>
       <div>Quelle: Google Maps, öffentlich sichtbare Banner. „Kein Banner“ heißt nur: im Scrape war kein passender Hinweis sichtbar. Snapshot: __SNAPSHOT__.</div>
 __ANALYTICS_PRIVACY__
@@ -676,7 +678,6 @@ __ANALYTICS_PRIVACY__
     </footer>
   </main>
 
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script id="placesData" type="application/json">__DATA__</script>
   <script id="bezirkData" type="application/json">__BEZIRK_DATA__</script>
   <script>
@@ -706,6 +707,109 @@ __DASHBOARD_JS__
 		"__DATA__", jsonText,
 		"__BEZIRK_DATA__", bezirkText,
 	).Replace(page)
+}
+
+func compactClientDataJSON(data []clientRow) string {
+	rows := make([][]interface{}, 0, len(data))
+	for _, row := range data {
+		rows = append(rows, []interface{}{
+			row.ID,
+			row.Name,
+			row.Postcode,
+			compactFloatPtr(row.Lat, 6),
+			compactFloatPtr(row.Lng, 6),
+			row.BezirkLabel,
+			compactFloatPtr(row.Rating, 1),
+			compactIntPtr(row.ReviewCount),
+			row.Category,
+			row.ParentCategory,
+			boolInt(row.HasBanner),
+			row.RemovedRange,
+			compactFloat(row.RemovedEstimate, 1),
+			compactFloatPtr(row.DeletionRatioPct, 2),
+			compactFloatPtr(row.RealRatingAdjusted, 3),
+			row.Address,
+			readAtMillis(row.ReadAt),
+		})
+	}
+	return safeJSON(rows)
+}
+
+func compactBezirkDataJSON() string {
+	boundaries := mapsreview.BezirkBoundaries()
+	rows := make([][]interface{}, 0, len(boundaries))
+	for _, boundary := range boundaries {
+		polygons := make([][]float64, 0, len(boundary.Polygons))
+		for _, polygon := range boundary.Polygons {
+			flat := make([]float64, 0, len(polygon)*2)
+			for _, point := range polygon {
+				if len(point) < 2 {
+					continue
+				}
+				flat = append(flat, roundDecimal(point[0], 5), roundDecimal(point[1], 5))
+			}
+			if len(flat) > 0 {
+				polygons = append(polygons, flat)
+			}
+		}
+		rows = append(rows, []interface{}{boundary.Label, polygons})
+	}
+	return safeJSON(rows)
+}
+
+func compactFloatPtr(value *float64, decimals int) interface{} {
+	if value == nil {
+		return nil
+	}
+	return compactFloat(*value, decimals)
+}
+
+func compactFloat(value float64, decimals int) interface{} {
+	if math.IsNaN(value) || math.IsInf(value, 0) {
+		return nil
+	}
+	return roundDecimal(value, decimals)
+}
+
+func compactIntPtr(value *int) interface{} {
+	if value == nil {
+		return nil
+	}
+	return *value
+}
+
+func boolInt(value bool) int {
+	if value {
+		return 1
+	}
+	return 0
+}
+
+func roundDecimal(value float64, decimals int) float64 {
+	factor := math.Pow(10, float64(decimals))
+	return math.Round(value*factor) / factor
+}
+
+func readAtMillis(value string) int64 {
+	if value == "" {
+		return 0
+	}
+	parsed, err := time.Parse(time.RFC3339, value)
+	if err != nil {
+		parsed, err = time.Parse(time.RFC3339Nano, value)
+	}
+	if err != nil {
+		return 0
+	}
+	return parsed.UnixMilli()
+}
+
+func safeJSON(value interface{}) string {
+	jsonData, err := json.Marshal(value)
+	if err != nil {
+		return "[]"
+	}
+	return strings.ReplaceAll(string(jsonData), "<", "\\u003c")
 }
 
 func snapshotTime(data []clientRow) time.Time {
