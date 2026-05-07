@@ -34,7 +34,7 @@ type args struct {
 func parseArgs(argv []string) (args, error) {
 	csvSet := false
 	out := args{
-		Postcodes:      mapsreview.NurembergPostcodes,
+		Postcodes:      mapsreview.IbbenbuerenPostcodes,
 		Queries:        mapsreview.DefaultQueries,
 		Headless:       false,
 		DelayMin:       2500,
@@ -53,7 +53,7 @@ func parseArgs(argv []string) (args, error) {
 		switch key {
 		case "--postcodes":
 			if value == "" || value == "all" {
-				out.Postcodes = mapsreview.NurembergPostcodes
+				out.Postcodes = mapsreview.IbbenbuerenPostcodes
 			} else {
 				out.Postcodes = splitCSV(value)
 			}
@@ -121,7 +121,7 @@ func printHelp() {
   go run ./cmd/scrape --postcodes 90402,90403 --queries restaurant,café,imbiss
 
 Options:
-  --postcodes <all|csv>     Nürnberg PLZ list. Default: all known Nürnberg PLZ.
+  --postcodes <all|csv>     Ibbenbüren PLZ list. Default: all known Ibbenbüren PLZ.
   --queries <csv>           Google Maps search terms. Default: %s.
   --max-results <n>         Stop after n discovered places. 0 = unlimited.
   --headless <true|false>   Chrome headless mode. Default: false; safer for consent/CAPTCHA.

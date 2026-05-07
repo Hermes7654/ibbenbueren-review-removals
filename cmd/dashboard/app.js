@@ -380,7 +380,7 @@ function initMap() {
   placesMap.createPane('placeMarkerPane');
   placesMap.getPane('placeMarkerPane').style.zIndex = 650;
   tileLayer = L.tileLayer(tileURL(), { maxZoom: 20, subdomains: 'abcd', attribution: '&copy; OpenStreetMap-Mitwirkende &copy; CARTO' }).addTo(placesMap);
-  bezirkLayer = L.layerGroup().addTo(placesMap);
+  bezirkLayer = L.layerGroup(); // not added to map
   markerLayer = L.layerGroup().addTo(placesMap);
   setupMapGestureGate(root);
   return true;

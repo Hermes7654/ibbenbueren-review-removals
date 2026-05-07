@@ -31,7 +31,7 @@ dashboard-build:
 	go run ./cmd/dashboard $(ARGS)
 
 open-dashboard:
-	@file="$$(pwd)/output/charts/nuernberg_dashboard.html"; \
+	@file="$$(pwd)/output/charts/ibbenbueren_dashboard.html"; \
 	if command -v open >/dev/null 2>&1; then \
 		open "$$file"; \
 	elif command -v xdg-open >/dev/null 2>&1; then \
@@ -49,8 +49,8 @@ site:
 	echo "$(SITE_DOMAIN)" > public/CNAME
 	printf "User-agent: *\nAllow: /\nSitemap: $(SITE_URL)/sitemap.xml\n" > public/robots.txt
 	@lastmod="$$(date -u +%Y-%m-%d)"; \
-	printf '%s\n' '<?xml version="1.0" encoding="UTF-8"?>' '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' "  <url><loc>$(SITE_URL)/</loc><lastmod>$$lastmod</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>" "  <url><loc>$(SITE_URL)/charts/nuernberg_most_removed.html</loc><lastmod>$$lastmod</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>" '</urlset>' > public/sitemap.xml
-	cp output/charts/nuernberg_dashboard.html public/index.html
+	printf '%s\n' '<?xml version="1.0" encoding="UTF-8"?>' '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' "  <url><loc>$(SITE_URL)/</loc><lastmod>$$lastmod</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>" "  <url><loc>$(SITE_URL)/charts/ibbenbueren_most_removed.html</loc><lastmod>$$lastmod</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>" '</urlset>' > public/sitemap.xml
+	cp output/charts/ibbenbueren_dashboard.html public/index.html
 	cp output/charts/* public/charts/
 	cp output/metadata.json output/places.csv public/data/
 

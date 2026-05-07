@@ -11,7 +11,7 @@ import (
 
 type args struct {
 	Input           string
-	StrictNuremberg bool
+	StrictIbbenbueren bool
 }
 
 func main() {
@@ -72,11 +72,11 @@ func run(args args) error {
 			if (row.Lat == nil || row.Lng == nil) && mapsreview.ExtractCoordinates(row.URL) == nil {
 				missingCoords++
 			}
-			if mapsreview.NurembergPostcodeSet[mapsreview.StringValue(row.Postcode)] && (row.BezirkID == nil || row.BezirkName == nil) {
+			if mapsreview.IbbenbuerenPostcodeSet[mapsreview.StringValue(row.Postcode)] && (row.BezirkID == nil || row.BezirkName == nil) {
 				missingBezirk++
 			}
 		}
-		if postcode := mapsreview.StringValue(row.Postcode); postcode != "" && !mapsreview.NurembergPostcodeSet[postcode] {
+		if postcode := mapsreview.StringValue(row.Postcode); postcode != "" && !mapsreview.IbbenbuerenPostcodeSet[postcode] {
 			outside[postcode]++
 		}
 		if row.HasDefamationNotice && (row.RemovedMin == nil || row.RemovedEstimate == nil || row.RemovedText == nil) {
@@ -107,7 +107,7 @@ func run(args args) error {
 		warnings = append(warnings, fmt.Sprintf("%d success rows are missing coordinates", missingCoords))
 	}
 	if missingBezirk > 0 {
-		warnings = append(warnings, fmt.Sprintf("%d Nürnberg success rows are missing statistical district assignment", missingBezirk))
+		warnings = append(warnings, fmt.Sprintf("%d Ibbenbüren success rows are missing statistical district assignment", missingBezirk))
 	}
 	if len(outside) > 0 {
 		parts := make([]string, 0, len(outside))
@@ -115,8 +115,8 @@ func run(args args) error {
 			parts = append(parts, fmt.Sprintf("%s:%d", postcode, count))
 		}
 		sort.Strings(parts)
-		message := "outside Nürnberg PLZ: " + strings.Join(parts, ", ")
-		if args.StrictNuremberg {
+		message := "outside Ibbenbüren PLZ: " + strings.Join(parts, ", ")
+		if args.StrictIbbenbueren {
 			fatal = append(fatal, message)
 		} else {
 			warnings = append(warnings, message)
@@ -153,8 +153,8 @@ func parseArgs(argv []string) (args, error) {
 		switch key {
 		case "--input":
 			out.Input = value
-		case "--strict-nuremberg":
-			out.StrictNuremberg = true
+		case "--strict-ibbenbueren":
+			out.StrictIbbenbueren = true
 			consume = false
 		case "--help", "-h":
 			fmt.Println(`Usage:
@@ -162,7 +162,7 @@ func parseArgs(argv []string) (args, error) {
 
 Options:
   --input <path>          Results JSON. Default: output/places.json.
-  --strict-nuremberg     Treat outside-Nürnberg postcodes as errors.`)
+  --strict-ibbenbueren     Treat outside-Ibbenbüren postcodes as errors.`)
 			os.Exit(0)
 		default:
 			return out, fmt.Errorf("unknown argument: %s", arg)

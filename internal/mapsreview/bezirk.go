@@ -10,10 +10,10 @@ import (
 	"sync"
 )
 
-// Source: Stadt Nürnberg Bezirksatlas InstantAtlas layer
-// https://online-service2.nuernberg.de/geoinf/ia_bezirksatlas/
+// Source: OpenStreetMap Gemeindegrenzen InstantAtlas layer
+// https://openstreetmap.org/
 //
-//go:embed data/nuernberg_statistische_bezirke.json
+//go:embed data/ibbenbueren_gemeinden.json
 var bezirkFS embed.FS
 
 type Bezirk struct {
@@ -133,7 +133,7 @@ func assignBezirk(lat, lng float64, postcode string, allowFallback bool) *Bezirk
 			return &bezirk
 		}
 	}
-	if allowFallback && NurembergPostcodeSet[strings.TrimSpace(postcode)] {
+	if allowFallback && IbbenbuerenPostcodeSet[strings.TrimSpace(postcode)] {
 		if polygon := idx.nearest(p); polygon != nil {
 			bezirk := polygon.Bezirk
 			return &bezirk
@@ -144,7 +144,7 @@ func assignBezirk(lat, lng float64, postcode string, allowFallback bool) *Bezirk
 
 func loadBezirkIndex() (*bezirkIndex, error) {
 	bezirkOnce.Do(func() {
-		data, err := bezirkFS.ReadFile("data/nuernberg_statistische_bezirke.json")
+		data, err := bezirkFS.ReadFile("data/ibbenbueren_gemeinden.json")
 		if err != nil {
 			bezirkError = err
 			return

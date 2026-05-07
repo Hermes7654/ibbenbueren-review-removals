@@ -20,14 +20,14 @@ var dashboardJS string
 
 const (
 	defaultInput  = mapsreview.ResultsJSON
-	defaultOutput = "output/charts/nuernberg_dashboard.html"
+	defaultOutput = "output/charts/ibbenbueren_dashboard.html"
 
 	siteURL         = "https://nuernberg-maps-review-removals.patwoz.dev/"
-	siteName        = "Nürnberg Maps Review Removals"
-	pageTitle       = "Nürnberg Google-Maps-Bewertungen: Löschbanner-Dashboard"
-	pageDescription = "Interaktives Nürnberg-Dashboard zu sichtbaren Google-Maps-Hinweisen auf entfernte Bewertungen: Löschbanner, Löschquoten, Karte und Daten-Explorer."
-	socialImageURL  = siteURL + "charts/nuernberg_overall_summary.png"
-	socialImageAlt  = "Diagramm zur Auswertung entfernter Google-Maps-Bewertungen in Nürnberg"
+	siteName        = "Ibbenbüren Maps Review Removals"
+	pageTitle       = "Ibbenbüren Google-Maps-Bewertungen: Löschbanner-Dashboard"
+	pageDescription = "Interaktives Ibbenbüren-Dashboard zu sichtbaren Google-Maps-Hinweisen auf entfernte Bewertungen: Löschbanner, Löschquoten, Karte und Daten-Explorer."
+	socialImageURL  = siteURL + "charts/ibbenbueren_overall_summary.png"
+	socialImageAlt  = "Diagramm zur Auswertung entfernter Google-Maps-Bewertungen in Ibbenbüren"
 )
 
 type args struct {
@@ -111,7 +111,7 @@ func parseArgs(argv []string) (args, error) {
 		case "--help", "-h":
 			fmt.Println(`Usage:
   go run ./cmd/dashboard
-  go run ./cmd/dashboard --input output/places.json --output output/charts/nuernberg_dashboard.html`)
+  go run ./cmd/dashboard --input output/places.json --output output/charts/ibbenbueren_dashboard.html`)
 			os.Exit(0)
 		default:
 			return out, fmt.Errorf("unknown argument: %s", argv[i])
@@ -430,9 +430,9 @@ __ANALYTICS__
     .theme-toggle { display: inline-flex; align-items: center; gap: 8px; height: 42px; margin-left: auto; margin-right: 190px; padding: 0 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--heading); box-shadow: 0 1px 4px rgba(0,0,0,.12); font-weight: 700; cursor: pointer; }
     .theme-toggle:hover, .theme-toggle:focus-visible { border-color: var(--red); color: var(--red); outline: none; }
     .theme-toggle-icon { width: 1.1em; text-align: center; }
-    .n-logo { position: absolute; right: 0; top: 0; width: 170px; height: 128px; padding: 66px 14px 10px; background: var(--red); color: #fff; font-size: 24px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; z-index: 5; }
-    .n-logo::before { content: ""; position: absolute; left: 14px; right: 14px; top: 58px; height: 2px; background: #fff; opacity: .9; }
-    .n-logo::after { content: "⌂⌂"; position: absolute; right: 13px; top: 20px; color: #fff; font-size: 36px; letter-spacing: -12px; transform: scaleX(1.4); }
+    .i-logo { position: absolute; right: 0; top: 0; width: 170px; height: 128px; padding: 66px 14px 10px; background: var(--red); color: #fff; font-size: 24px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; z-index: 5; }
+    .i-logo::before { content: ""; position: absolute; left: 14px; right: 14px; top: 58px; height: 2px; background: #fff; opacity: .9; }
+    .i-logo::after { content: "⌂⌂"; position: absolute; right: 13px; top: 20px; color: #fff; font-size: 36px; letter-spacing: -12px; transform: scaleX(1.4); }
     .hero { min-height: 380px; margin: 0 0 30px; background: var(--hero-bg); display: flex; align-items: end; }
     .hero-inner { width: min(1320px, calc(100vw - 32px)); margin: 0 auto; padding: 140px 0 42px; }
     .hero-title { width: min(760px, 100%); margin: 0; padding: 24px 28px; background: var(--hero-title-bg); color: #fff; font-size: clamp(32px, 4vw, 52px); line-height: 1.12; font-weight: 400; }
@@ -551,14 +551,14 @@ __ANALYTICS__
     footer { margin-top: 18px; color: var(--muted); font-size: 13px; line-height: 1.5; }
     .footer-privacy, .footer-credit { margin-top: 6px; }
     .footer-credit a { font-weight: 700; }
-    @media (max-width: 1200px) { .kpis, .panel-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .controls { grid-template-columns: 1fr 1fr 1fr; } .search { grid-column: 1 / -1; } .theme-toggle { margin-left: auto; margin-right: 0; } .n-logo { position: relative; height: 76px; width: 150px; margin-left: 0; padding-top: 48px; } .n-logo::before { top: 40px; } .n-logo::after { top: 4px; } }
+    @media (max-width: 1200px) { .kpis, .panel-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .controls { grid-template-columns: 1fr 1fr 1fr; } .search { grid-column: 1 / -1; } .theme-toggle { margin-left: auto; margin-right: 0; } .i-logo { position: relative; height: 76px; width: 150px; margin-left: 0; padding-top: 48px; } .i-logo::before { top: 40px; } .i-logo::after { top: 4px; } }
     @media (max-width: 720px) {
       .sitebar-inner, main, .hero-inner { width: min(100vw - 20px, 1320px); }
       .sitebar-inner { gap: 14px; }
       .top-icons { display: none; }
       .theme-toggle { width: 42px; padding: 0; justify-content: center; }
       .theme-toggle-text { display: none; }
-      .n-logo { width: 128px; font-size: 18px; padding-left: 10px; padding-right: 10px; }
+      .i-logo { width: 128px; font-size: 18px; padding-left: 10px; padding-right: 10px; }
       .kpis, .panel-grid, .seo-facts { grid-template-columns: 1fr; }
       .controls { position: sticky; top: 0; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px 10px; padding: 10px; margin-bottom: 14px; }
       .filter-toggle { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 42px; padding: 8px 12px; border: 0; border-radius: 5px; background: var(--control-bg); color: var(--control-text); text-align: left; cursor: pointer; }
@@ -583,13 +583,13 @@ __ANALYTICS__
     <div class="sitebar-inner">
       <div class="top-icons" aria-hidden="true"><span>●</span><span>☝</span><span>▰</span></div>
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="Dunkles Design aktivieren" aria-pressed="false"><span class="theme-toggle-icon" aria-hidden="true">☾</span><span class="theme-toggle-text">Dunkel</span></button>
-      <div class="n-logo">Nürnberg</div>
+      <div class="i-logo">Ibbenbüren</div>
     </div>
   </div>
 
   <section class="hero" aria-label="Seitentitel">
     <div class="hero-inner">
-      <h1 class="hero-title">Nürnberg Google-Maps-Bewertungen</h1>
+      <h1 class="hero-title">Ibbenbüren Google-Maps-Bewertungen</h1>
       <div class="hero-subtitle">Interaktives Daten-Dashboard zu sichtbaren Hinweisen auf entfernte Bewertungen wegen Diffamierungsbeschwerden.</div>
     </div>
   </section>
@@ -828,7 +828,7 @@ func compactAddress(address string, postcode string) string {
 	if address == "" {
 		return ""
 	}
-	city := postcode + " Nürnberg"
+	city := postcode + " Ibbenbüren"
 	if address == city {
 		return ""
 	}
@@ -938,8 +938,8 @@ func makeSEOStats(data []clientRow, snapshot string) seoStats {
 
 func seoSummaryHTML(stats seoStats) string {
 	return fmt.Sprintf(`<section class="card seo-summary" aria-labelledby="data-overview-title">
-      <h2 id="data-overview-title">Datenstand: Google-Maps-Bewertungen und Löschbanner in Nürnberg</h2>
-      <p>Dieses Dashboard macht öffentlich sichtbare Hinweise auf wegen Diffamierungsbeschwerden entfernte Google-Maps-Bewertungen in Nürnberg durchsuchbar. Die Karte, Filter und Ranglisten zeigen Löschbanner, geschätzte entfernte Bewertungen, Löschquoten und Worst-Case-Ratings je Ort.</p>
+      <h2 id="data-overview-title">Datenstand: Google-Maps-Bewertungen und Löschbanner in Ibbenbüren</h2>
+      <p>Dieses Dashboard macht öffentlich sichtbare Hinweise auf wegen Diffamierungsbeschwerden entfernte Google-Maps-Bewertungen in Ibbenbüren durchsuchbar. Die Karte, Filter und Ranglisten zeigen Löschbanner, geschätzte entfernte Bewertungen, Löschquoten und Worst-Case-Ratings je Ort.</p>
       <ul class="seo-facts">
         <li><strong>%s</strong> erfasste Orte</li>
         <li><strong>%s</strong> mit sichtbarem Löschbanner</li>
@@ -1031,14 +1031,14 @@ func structuredDataJSON(stats seoStats, snapshot time.Time) string {
 			{
 				"@type":                "Dataset",
 				"@id":                  siteURL + "#dataset",
-				"name":                 "Nürnberg Google-Maps-Bewertungen mit sichtbaren Löschbanner-Hinweisen",
+				"name":                 "Ibbenbüren Google-Maps-Bewertungen mit sichtbaren Löschbanner-Hinweisen",
 				"description":          pageDescription,
 				"url":                  siteURL,
 				"dateModified":         snapshot.Format("2006-01-02"),
 				"temporalCoverage":     snapshot.Format("2006-01-02"),
 				"measurementTechnique": "Scrape öffentlich sichtbarer Google-Maps-Ortsseiten",
 				"keywords": []string{
-					"Nürnberg",
+					"Ibbenbüren",
 					"Google Maps Bewertungen",
 					"entfernte Bewertungen",
 					"Löschbanner",
@@ -1046,7 +1046,7 @@ func structuredDataJSON(stats seoStats, snapshot time.Time) string {
 				},
 				"spatialCoverage": map[string]interface{}{
 					"@type": "City",
-					"name":  "Nürnberg",
+					"name":  "Ibbenbüren",
 				},
 				"variableMeasured": []string{
 					"Orte",
